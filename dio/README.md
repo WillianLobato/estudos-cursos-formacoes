@@ -17,10 +17,5 @@ A **DIO** é uma plataforma brasileira de educação em tecnologia fundada em 20
 
 Nesta pasta estão reunidos os exercícios, desafios de código e projetos desenvolvidos durante as minhas formações e bootcamps na plataforma:
 
-* 📁 **Formação Fundamentos de Inteligência Artificial** — Projetos e desafios sobre IA Generativa.
-* 📁 **Formação Python Fundamentals** — Exercícios de lógica, estruturas de dados e scripts em Python.
-* 📁 **Bootcamp Blip** — Desafios práticos e desenvolvimento de soluções conversacionais/IA.
-* 📁 **Lógica de Programação** — Desafios de algoritmos e resolução de problemas.
-
 ---
 [⬅️ Voltar para o início](../README.md)
