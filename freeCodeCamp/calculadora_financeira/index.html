@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel & Calculadoras Financeiras</title>
+<style>
+  :root {
+    --fundo: #eef2f6; --painel: #ffffff; --tinta: #14213d; --suave: #5b6779;
+    --linha: #d6dde6; --verde: #0b6e4f; --verde-claro: #dff3ea; --ambar: #b26a00;
+    --erro: #b3261e; color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --fundo: #0e1522; --painel: #172033; --tinta: #e8edf5; --suave: #98a4b8;
+            --linha: #2a3650; --verde: #4cc79a; --verde-claro: #12372c; --ambar: #f0b04a;
+            --erro: #ff8a80; color-scheme: dark; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--fundo); color: var(--tinta);
+         font: 16px/1.5 system-ui, "Segoe UI", Roboto, sans-serif; }
+  .num { font-variant-numeric: tabular-nums; }
+  header { padding: 28px 20px 8px; max-width: 980px; margin: 0 auto; }
+  h1 { font-size: 1.5rem; margin: 0; letter-spacing: -.01em; }
+  header p { margin: 4px 0 0; color: var(--suave); }
+  nav { max-width: 980px; margin: 16px auto 0; padding: 0 20px; display: flex; gap: 4px;
+        overflow-x: auto; border-bottom: 1px solid var(--linha); }
+  nav button { background: none; border: 0; padding: 10px 14px; font: inherit; color: var(--suave);
+               cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
+  nav button[aria-selected="true"] { color: var(--tinta); border-color: var(--verde); font-weight: 600; }
+  button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--ambar); outline-offset: 2px; }
+  main { max-width: 980px; margin: 0 auto; padding: 20px; }
+  section { display: none; } section.ativa { display: block; }
+  .painel { background: var(--painel); border: 1px solid var(--linha); border-radius: 10px; padding: 20px; }
+  h2 { font-size: 1.15rem; margin: 0 0 4px; }
+  .ajuda { color: var(--suave); font-size: .9rem; margin: 0 0 16px; }
+  form { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; align-items: end; }
+  label { display: grid; gap: 4px; font-size: .9rem; color: var(--suave); }
+  input, select { font: inherit; padding: 9px 10px; border: 1px solid var(--linha); border-radius: 6px;
+                  background: var(--fundo); color: var(--tinta); width: 100%; }
+  .btn { font: inherit; font-weight: 600; padding: 10px 16px; border: 0; border-radius: 6px;
+         background: var(--verde); color: #fff; cursor: pointer; }
+  @media (prefers-color-scheme: dark) { .btn { color: #06251b; } }
+  .resultado { margin-top: 20px; }
+  .metricas { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+  .metrica { border-left: 4px solid var(--linha); padding: 4px 12px; }
+  .metrica.destaque { border-color: var(--verde); }
+  .metrica small { color: var(--suave); display: block; }
+  .metrica strong { font-size: 1.35rem; }
+  .selo { display: inline-block; padding: 2px 10px; border-radius: 99px; font-size: .8rem;
+          background: var(--verde-claro); color: var(--verde); font-weight: 600; }
+  .selo.off { background: transparent; border: 1px solid var(--ambar); color: var(--ambar); }
+  .tabela-wrap { overflow-x: auto; margin-top: 16px; }
+  table { border-collapse: collapse; width: 100%; font-size: .93rem; }
+  th, td { text-align: right; padding: 8px 10px; border-bottom: 1px solid var(--linha); white-space: nowrap; }
+  th:first-child, td:first-child { text-align: left; }
+  th { color: var(--suave); font-weight: 600; }
+  tr.vencedor td { background: var(--verde-claro); font-weight: 600; }
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+  .erro { color: var(--erro); margin-top: 12px; }
+  .aviso { color: var(--suave); font-size: .85rem; margin-top: 14px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Painel &amp; Calculadoras Financeiras</h1>
+  <p>Indicadores e simulações do dia a dia, rodando no seu computador.</p>
+</header>
+
+<nav role="tablist" aria-label="Seções">
+  <button role="tab" aria-selected="true"  data-aba="indicadores">Indicadores</button>
+  <button role="tab" aria-selected="false" data-aba="comparador">Comparador de investimentos</button>
+  <button role="tab" aria-selected="false" data-aba="juros">Juros compostos</button>
+  <button role="tab" aria-selected="false" data-aba="financiamento">Financiamento SAC vs. Price</button>
+</nav>
+
+<main>
+  <!-- INDICADORES -->
+  <section id="indicadores" class="ativa">
+    <div class="painel">
+      <h2>Indicadores de mercado</h2>
+      <p class="ajuda">Dados públicos do Banco Central e da AwesomeAPI. Se a consulta falhar, mostramos valores de referência.</p>
+      <div class="grid2" id="cartoes-indicadores"><p class="ajuda">Carregando…</p></div>
+      <p style="margin-top:16px"><button class="btn" id="atualizar">Atualizar indicadores</button></p>
+    </div>
+  </section>
+
+  <!-- COMPARADOR -->
+  <section id="comparador">
+    <div class="painel">
+      <h2>Comparador de investimentos</h2>
+      <p class="ajuda">Compara CDB (% do CDI), prefixado e poupança, já descontado o IR.</p>
+      <form data-api="/api/comparador" data-render="comparador">
+        <label>Valor inicial (R$)<input name="valor_inicial" type="number" step="0.01" min="0" value="5000"></label>
+        <label>Aporte mensal (R$)<input name="aporte_mensal" type="number" step="0.01" min="0" value="500"></label>
+        <label>Prazo (meses)<input name="meses" type="number" min="1" step="1" value="24" required></label>
+        <label>Selic (% a.a.)<input name="selic_anual" id="campo-selic" type="number" step="0.01" min="0" value="15" required></label>
+        <label>Percentual do CDI (%)<input name="pct_cdi" type="number" step="0.1" min="0" value="100"></label>
+        <label>Prefixado (% a.a.)<input name="taxa_prefixada_anual" type="number" step="0.01" min="0" placeholder="opcional"></label>
+        <button class="btn" type="submit">Comparar</button>
+      </form>
+      <div class="resultado" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- JUROS COMPOSTOS -->
+  <section id="juros">
+    <div class="painel">
+      <h2>Juros compostos</h2>
+      <p class="ajuda">Aportes feitos ao final de cada mês.</p>
+      <form data-api="/api/juros-compostos" data-render="juros">
+        <label>Valor inicial (R$)<input name="valor_inicial" type="number" step="0.01" min="0" value="1000"></label>
+        <label>Aporte mensal (R$)<input name="aporte_mensal" type="number" step="0.01" min="0" value="300"></label>
+        <label>Taxa (%)<input name="taxa" type="number" step="0.01" min="0" value="1" required></label>
+        <label>Tipo de taxa<select name="tipo_taxa"><option value="mensal">Ao mês</option><option value="anual">Ao ano</option></select></label>
+        <label>Prazo (meses)<input name="meses" type="number" min="1" step="1" value="36" required></label>
+        <button class="btn" type="submit">Calcular</button>
+      </form>
+      <div class="resultado" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- FINANCIAMENTO -->
+  <section id="financiamento">
+    <div class="painel">
+      <h2>Financiamento: SAC vs. Price</h2>
+      <p class="ajuda">SAC tem parcelas decrescentes; Price tem parcelas fixas.</p>
+      <form data-api="/api/financiamento" data-render="financiamento">
+        <label>Valor financiado (R$)<input name="valor" type="number" step="0.01" min="1" value="200000" required></label>
+        <label>Juros (% ao mês)<input name="taxa_mensal" type="number" step="0.01" min="0" value="0.9" required></label>
+        <label>Prazo (meses)<input name="prazo" type="number" min="1" step="1" value="240" required></label>
+        <button class="btn" type="submit">Simular</button>
+      </form>
+      <div class="resultado" aria-live="polite"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+const brl = v => Number(v).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+const pct = v => Number(v).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%";
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const metrica = (rotulo, valor, destaque) =>
+  `<div class="metrica ${destaque ? "destaque" : ""}"><small>${rotulo}</small><strong class="num">${valor}</strong></div>`;
+
+/* ---------- Abas ---------- */
+document.querySelectorAll("nav button").forEach(btn => btn.addEventListener("click", () => {
+  document.querySelectorAll("nav button").forEach(b => b.setAttribute("aria-selected", b === btn));
+  document.querySelectorAll("main section").forEach(s => s.classList.toggle("ativa", s.id === btn.dataset.aba));
+}));
+
+/* ---------- Indicadores ---------- */
+async function carregarIndicadores() {
+  const alvo = document.getElementById("cartoes-indicadores");
+  try {
+    const d = await (await fetch("/api/indicadores")).json();
+    const cartao = (titulo, ind, texto) => `
+      <div class="metrica destaque"><small>${titulo}</small><strong class="num">${texto}</strong><br>
+      <span class="selo ${ind.ao_vivo ? "" : "off"}">${ind.ao_vivo ? "Ao vivo" : "Referência offline"}</span>
+      <small>${esc(ind.fonte)}${ind.referencia ? " · " + esc(ind.referencia) : ""}</small></div>`;
+    alvo.innerHTML = cartao("Meta Selic (ao ano)", d.selic, pct(d.selic.valor)) +
+                     cartao("Dólar (USD/BRL)", d.usd_brl, brl(d.usd_brl.valor));
+    document.getElementById("campo-selic").value = d.selic.valor;
+  } catch (e) {
+    alvo.innerHTML = '<p class="erro">Não foi possível carregar os indicadores. Verifique se o servidor está ativo.</p>';
+  }
+}
+document.getElementById("atualizar").addEventListener("click", carregarIndicadores);
+carregarIndicadores();
+
+/* ---------- Renderizadores ---------- */
+const renderizadores = {
+  juros: r => `<div class="metricas">
+      ${metrica("Montante final", brl(r.montante_final), true)}
+      ${metrica("Total investido", brl(r.total_investido))}
+      ${metrica("Total de juros", brl(r.total_juros))}
+      ${metrica("Taxa equivalente", pct(r.taxa_mensal_usada) + " a.m. / " + pct(r.taxa_anual_equivalente) + " a.a.")}
+    </div>`,
+
+  comparador: r => `<p><span class="selo">Melhor opção: ${esc(r.melhor)}</span>
+      Vantagem de ${brl(r.vantagem_sobre_pior)} sobre a pior (líquido). CDI estimado: ${pct(r.cdi_anual)} a.a.</p>
+    <div class="tabela-wrap"><table class="num"><thead><tr>
+      <th>Opção</th><th>Taxa a.a.</th><th>Investido</th><th>Bruto</th><th>IR</th><th>Líquido</th></tr></thead><tbody>
+      ${r.opcoes.map((o, i) => `<tr class="${i === 0 ? "vencedor" : ""}"><td>${esc(o.nome)}</td>
+        <td>${pct(o.taxa_anual)}</td><td>${brl(o.total_investido)}</td><td>${brl(o.montante_bruto)}</td>
+        <td>${brl(o.ir)} (${pct(o.aliquota_ir)})</td><td>${brl(o.montante_liquido)}</td></tr>`).join("")}
+    </tbody></table></div>
+    <p class="aviso">Estimativa didática: CDI ≈ Selic − 0,10 p.p.; IR regressivo calculado sobre o lucro total. Não é recomendação de investimento.</p>`,
+
+  financiamento: r => {
+    const linha = (rot, k, f) => `<tr><td>${rot}</td><td>${f(r.sac[k])}</td><td>${f(r.price[k])}</td></tr>`;
+    return `<p><span class="selo">Menor custo total: ${r.menor_custo}</span>
+      Diferença de ${brl(r.economia_total)} · taxa equivalente de ${pct(r.taxa_anual_equivalente)} a.a.</p>
+      <div class="tabela-wrap"><table class="num"><thead><tr><th></th><th>SAC</th><th>Price</th></tr></thead><tbody>
+        ${linha("Parcela inicial", "parcela_inicial", brl)}${linha("Parcela final", "parcela_final", brl)}
+        ${linha("Parcela média", "parcela_media", brl)}${linha("Total pago", "total_pago", brl)}
+        ${linha("Total de juros", "total_juros", brl)}
+      </tbody></table></div>
+      <p class="aviso">Não inclui seguros, taxas administrativas nem correção monetária (TR/IPCA).</p>`;
+  }
+};
+
+/* ---------- Envio dos formulários ---------- */
+document.querySelectorAll("form[data-api]").forEach(form => form.addEventListener("submit", async ev => {
+  ev.preventDefault();
+  const saida = form.parentElement.querySelector(".resultado");
+  const corpo = Object.fromEntries(new FormData(form));
+  saida.innerHTML = '<p class="ajuda">Calculando…</p>';
+  try {
+    const resp = await fetch(form.dataset.api, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(corpo)
+    });
+    const dados = await resp.json();
+    saida.innerHTML = resp.ok ? renderizadores[form.dataset.render](dados)
+                              : `<p class="erro">${esc(dados.erro || "Erro ao calcular.")}</p>`;
+  } catch (e) {
+    saida.innerHTML = '<p class="erro">Falha de comunicação com o servidor local.</p>';
+  }
+}));
+</script>
+</body>
+</html>
