@@ -22,8 +22,8 @@ Clique nas pastas abaixo para explorar os códigos e desafios desenvolvidos em c
 | :--- | :--- | :--- |
 | 📁 **[DIO](./dio)** | Formações & Bootcamps (Python, Lógica, IA, Blip) | `Python`, `Lógica de Programação`, `IA Generativa`, `Git/GitHub` |
 | 📁 **[Santander](./santander)** | Santander Open Academy & Trilhas Tech | `Back-end`, `Fundamentos de Programação`, `Dados` |
-| 📁 **Coursera** *(em breve)* | Google AI Professional Certificate | `Inteligência Artificial`, `Prompt Engineering`, `Automação` |
-| 📁 **freeCodeCamp** *(em breve)* | Certificações & Exercícios Práticos | `Python`, `SQL`, `Algoritmos e Estruturas de Dados` |
+| 📁 **[freeCodeCamp](./freecodecamp)** | Certificações & Exercícios Práticos | `Python`, `SQL`, `Algoritmos e Estruturas de Dados` |
+| 📁 **[Harvard (CS50P)](./harvard-cs50p)** | CS50's Introduction to Programming with Python | `Python`, `Testes Unitários`, `Regex`, `OOP` |
 
 *(Novas pastas e trilhas são adicionadas continuamente conforme o avanço nos estudos).*
 
@@ -43,9 +43,9 @@ Clique nas pastas abaixo para explorar os códigos e desafios desenvolvidos em c
 
 Profissional em evolução contínua na área de **Desenvolvimento Back-end, Inteligência Artificial e Arquitetura de Software**, combinando sólida bagagem analítica e de negócios com desenvolvimento técnico.
 
-* 🎓 Graduado em **Análise e Desenvolvimento de Sistemas**
-* 📚 Pós-graduando em **Engenharia de Software e Arquitetura de Sistemas**
-* 💼 Experiência prévia em **Suporte de Aplicações / TI** e **Setor Financeiro**
+- 🎓 Graduado em **Análise e Desenvolvimento de Sistemas**
+- 📚 Pós-graduando em **Engenharia de Software e Arquitetura de Sistemas**
+- 💼 Experiência prévia em **Suporte de Aplicações / TI** e **Setor Financeiro**
 
 ---
 
